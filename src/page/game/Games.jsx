@@ -59,7 +59,7 @@ const Games = ({ onGameSelect }) => {
               </div>
               <button
                 onClick={() => {
-                  if (item.GameName.toLowerCase().includes('arrow')) {
+                  if (item.GameName.toLowerCase().includes("arrow")) {
                     setShowArrowGame(true);
                   } else if (onGameSelect) {
                     onGameSelect();
@@ -71,7 +71,7 @@ const Games = ({ onGameSelect }) => {
               </button>
               <button
                 onClick={() => {
-                  if (item.GameName.toLowerCase().includes('arrow')) {
+                  if (item.GameName.toLowerCase().includes("arrow")) {
                     setShowArrowGame(true);
                   } else if (onGameSelect) {
                     onGameSelect();
