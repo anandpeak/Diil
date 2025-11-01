@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import data from "../../json/games.json";
 import { IoPlayOutline } from "react-icons/io5";
 import news from "../../json/news.json";
 import { PiWarningOctagon } from "react-icons/pi";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { FaRegStar } from "react-icons/fa6";
-import ArrowGame from "./arrow/ArrowGame";
 
-const Games = ({ onGameSelect }) => {
-  const [showArrowGame, setShowArrowGame] = useState(false);
+const Games = () => {
+  const navigate = useNavigate();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -27,10 +27,6 @@ const Games = ({ onGameSelect }) => {
 
     return `${dayText} - ${month}/${day} ${year}`;
   };
-
-  if (showArrowGame) {
-    return <ArrowGame />;
-  }
 
   return (
     <div className="p-4 w-full">
@@ -60,9 +56,7 @@ const Games = ({ onGameSelect }) => {
               <button
                 onClick={() => {
                   if (item.GameName.toLowerCase().includes("arrow")) {
-                    setShowArrowGame(true);
-                  } else if (onGameSelect) {
-                    onGameSelect();
+                    navigate("/games/arrow");
                   }
                 }}
                 className="w-10 h-10 rounded-full bg-[#1D293D] border-2 border-[#020618]  items-center justify-center text-[#fff] hidden md:flex hover:bg-[#29EAFF] transition-all duration-300 cursor-pointer"
@@ -72,9 +66,7 @@ const Games = ({ onGameSelect }) => {
               <button
                 onClick={() => {
                   if (item.GameName.toLowerCase().includes("arrow")) {
-                    setShowArrowGame(true);
-                  } else if (onGameSelect) {
-                    onGameSelect();
+                    navigate("/games/arrow");
                   }
                 }}
                 className="md:hidden flex items-center gap-2 py-1 ps-6 pe-1 bg-[#020618] hover:bg-[#29EAFF] rounded-[99px] transition-all duration-300 group cursor-pointer"

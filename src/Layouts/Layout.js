@@ -36,7 +36,7 @@ const Layout = () => {
     <div className="flex w-full overflow-hidden min-h-[calc(var(--vh,1vh)*100)]">
       {/* Desktop Sidebar - fixed on left */}
       <aside
-        className={`hidden lg:block fixed left-0 top-0 h-screen transition-all duration-300 z-40 ${
+        className={`hidden lg:block fixed left-0 top-0 h-screen transition-all duration-100 z-40 ${
           sidebar ? "w-[14.75rem]" : "w-[5rem]"
         }`}
       >
@@ -44,15 +44,18 @@ const Layout = () => {
       </aside>
 
       {/* Mobile/Tablet Sidebar - slides from right */}
+
       <aside
-        className={`lg:hidden fixed right-0 top-0 h-screen transition-transform duration-300 z-50 ${
-          sidebar ? "translate-x-0" : "translate-x-full"
-        } w-[14.75rem]`}
+        className={`lg:hidden fixed top-0 h-screen transition-transform duration-100 z-50
+    ${sidebar ? "translate-x-0" : "translate-x-full"}
+    ${isMobile ? "w-full" : "w-[14.75rem]"}
+    right-0
+  `}
       >
         <Sidebar />
       </aside>
 
-      {/* Overlay for mobile/tablet when sidebar is open */}
+      {/* Overlay for mobile/tablet */}
       {sidebar && (
         <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -71,7 +74,7 @@ const Layout = () => {
           <div
             className={`w-full ${
               isScrolled
-                ? `fixed top-0 z-30 shadow-md ${
+                ? `fixed top-0 z-30 border-b border-[#CAD5E2] ${
                     sidebar
                       ? "lg:w-[calc(100%-14.75rem)]"
                       : "lg:w-[calc(100%-5rem)]"

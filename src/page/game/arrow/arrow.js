@@ -11,8 +11,17 @@ class Confettiful {
     }
 
     _setupElements() {
-        const containerEl = document.querySelector('.confetti-container');
-        this.containerEl = containerEl;
+        // Try to find confetti-container inside the provided element first
+        if (this.el) {
+            this.containerEl = this.el.querySelector('.confetti-container') ||
+                              this.el.querySelector('[class*="confetti-container"]');
+        }
+
+        // Fallback to document query if not found
+        if (!this.containerEl) {
+            this.containerEl = document.querySelector('.confetti-container') ||
+                              document.querySelector('[class*="confetti-container"]');
+        }
     }
 
     _renderConfetti() {
@@ -30,11 +39,23 @@ class Confettiful {
             const confettiLeft = (Math.floor(Math.random() * this.el.offsetWidth)) + 'px';
             const confettiAnimation = this.confettiAnimations[Math.floor(Math.random() * this.confettiAnimations.length)];
 
-            confettiEl.classList.add('confetti', 'confetti--animation-' + confettiAnimation);
+            // Apply inline styles for animation
+            confettiEl.style.position = 'absolute';
+            confettiEl.style.zIndex = '1000';
+            confettiEl.style.top = '-10px';
             confettiEl.style.left = confettiLeft;
             confettiEl.style.width = confettiSize;
             confettiEl.style.height = confettiSize;
             confettiEl.style.backgroundColor = confettiBackground;
+            confettiEl.style.borderRadius = '0%';
+
+            // Apply animation based on speed
+            const animations = {
+                'slow': 'confetti-slow 2.25s linear 1 forwards',
+                'medium': 'confetti-medium 1.75s linear 1 forwards',
+                'fast': 'confetti-fast 1.25s linear 1 forwards'
+            };
+            confettiEl.style.animation = animations[confettiAnimation];
 
             confettiEl.removeTimeout = setTimeout(function() {
                 if (confettiEl.parentNode) {
@@ -76,12 +97,13 @@ class ArrowSequence {
 }
 
 class ArrowGame {
-    constructor(canvas, onStatsUpdate, onTutorialComplete, onGameComplete) {
+    constructor(canvas, onStatsUpdate, onTutorialComplete, onGameComplete, containerElement = null) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.onStatsUpdate = onStatsUpdate;
         this.onTutorialComplete = onTutorialComplete;
         this.onGameComplete = onGameComplete;
+        this.containerElement = containerElement;
 
         // Set canvas size to full viewport
         this.canvas.width = window.innerWidth;
@@ -158,6 +180,14 @@ class ArrowGame {
 
         this.confettiful = null;
 
+        // Store event handlers for cleanup
+        this.eventHandlers = {
+            keydown: null,
+            resize: null,
+            touchstart: null,
+            touchend: null
+        };
+
         this.init();
     }
 
@@ -174,7 +204,7 @@ class ArrowGame {
         }
 
         // Handle window resize
-        window.addEventListener('resize', () => {
+        this.eventHandlers.resize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
             // Update createSize for responsive layout
@@ -184,7 +214,8 @@ class ArrowGame {
             if (this.arrows.length > 0) {
                 this.render();
             }
-        });
+        };
+        window.addEventListener('resize', this.eventHandlers.resize);
 
         this.updateUI();
         this.showTutorial();
@@ -354,7 +385,9 @@ class ArrowGame {
     }
 
     createConfetti() {
-        const gameContainer = document.querySelector('.arrow-game-container');
+        // Use provided container element or fallback to querySelector
+        const gameContainer = this.containerElement || document.querySelector('.arrow-game-container');
+
         if (!gameContainer) {
             console.warn('Game container not found for confetti');
             return;
@@ -363,6 +396,7 @@ class ArrowGame {
         if (!this.confettiful) {
             this.confettiful = new Confettiful(gameContainer);
         }
+
         this.confettiful.start();
 
         // Stop confetti after 3 seconds
@@ -566,7 +600,8 @@ class ArrowGame {
             wrongCount: this.wrongCount,
             accuracy: accuracy,
             avgTime: avgTime.toFixed(2),
-            avgCorrectTime: avgCorrectTime.toFixed(2)
+            avgCorrectTime: avgCorrectTime.toFixed(2),
+            coins: this.coins
         };
 
         // Call callback
@@ -607,7 +642,7 @@ class ArrowGame {
     }
 
     setupEventListeners() {
-        document.addEventListener('keydown', (event) => {
+        this.eventHandlers.keydown = (event) => {
             const keyMap = {
                 'ArrowUp': 0,
                 'ArrowRight': 1,
@@ -619,19 +654,20 @@ class ArrowGame {
                 event.preventDefault();
                 this.handleInput(keyMap[event.code]);
             }
-        });
+        };
+        document.addEventListener('keydown', this.eventHandlers.keydown);
 
         if (this.isMobile) {
             let touchStartX = 0;
             let touchStartY = 0;
 
-            this.canvas.addEventListener('touchstart', (event) => {
+            this.eventHandlers.touchstart = (event) => {
                 event.preventDefault();
                 touchStartX = event.touches[0].clientX;
                 touchStartY = event.touches[0].clientY;
-            });
+            };
 
-            this.canvas.addEventListener('touchend', (event) => {
+            this.eventHandlers.touchend = (event) => {
                 event.preventDefault();
                 if (!event.changedTouches) return;
 
@@ -652,7 +688,10 @@ class ArrowGame {
                         this.handleInput(direction);
                     }
                 }
-            });
+            };
+
+            this.canvas.addEventListener('touchstart', this.eventHandlers.touchstart);
+            this.canvas.addEventListener('touchend', this.eventHandlers.touchend);
         }
     }
 }
@@ -685,9 +724,33 @@ ArrowGame.prototype.restart = function() {
 
 ArrowGame.prototype.cleanup = function() {
     this.isPlay = false;
+
+    // Stop confetti
     if (this.confettiful) {
         this.confettiful.stop();
     }
+
+    // Remove all event listeners
+    if (this.eventHandlers.keydown) {
+        document.removeEventListener('keydown', this.eventHandlers.keydown);
+    }
+    if (this.eventHandlers.resize) {
+        window.removeEventListener('resize', this.eventHandlers.resize);
+    }
+    if (this.eventHandlers.touchstart) {
+        this.canvas.removeEventListener('touchstart', this.eventHandlers.touchstart);
+    }
+    if (this.eventHandlers.touchend) {
+        this.canvas.removeEventListener('touchend', this.eventHandlers.touchend);
+    }
+
+    // Clear canvas
+    if (this.ctx) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    // Clear arrows array
+    this.arrows = [];
 };
 
 // Export for ES6 modules

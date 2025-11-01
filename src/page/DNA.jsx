@@ -72,9 +72,10 @@ const DNA = () => {
     <div>
       {/* ---------- DESKTOP/TABLET VIEW ---------- */}
 
-      <div className="hidden md:block lg:flex w-full h-[calc(100vh-4rem)] items-start">
+      <div className="hidden md:block lg:flex w-full lg:h-[calc(100vh-4rem)] md:h-auto items-start">
         {/* Left side */}
-        <div className="lg:w-[50%] w-full h-full p-6">
+        <div className="lg:w-[50%] w-full h-full flex-1 p-6 flex flex-col">
+          {" "}
           <div className="relative w-full h-full rounded-[24px] p-0.5 bg-[linear-gradient(90deg,#FF4D29,#FFE83E)]">
             <div className="relative rounded-[22px] bg-[#fff] w-full h-full p-3 overflow-hidden">
               {/* Background gradient overlay */}
@@ -301,7 +302,7 @@ const DNA = () => {
           </div>
           {/* bottom side */}
           <div
-            className={`flex items-center w-full  ${
+            className={`flex items-center w-full my-4 ${
               page === 1 ? "justify-end" : "justify-between"
             }`}
           >

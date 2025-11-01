@@ -70,7 +70,7 @@ const Interviews = () => {
     <div className="md:p-6 p-0 relative">
       {/* datas */}
       <div className="md:flex hidden items-center gap-3 mb-6 justify-between overflow-x-scroll scrollbar-hide">
-        <div className="lg:w-[220px] lg:h-[149px] w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
+        <div className=" lg:h-[149px] lg:flex-1 w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#fff]">
               <img src="/icon/inter/total.svg" alt="icon" />
@@ -86,7 +86,7 @@ const Interviews = () => {
             </p>
           </div>
         </div>
-        <div className="lg:w-[220px] lg:h-[149px] w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
+        <div className=" lg:h-[149px] lg:flex-1 w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#fff]">
               <img src="/icon/inter/inter.svg" alt="icon" />
@@ -102,7 +102,7 @@ const Interviews = () => {
             </p>
           </div>
         </div>
-        <div className="lg:w-[220px] lg:h-[149px] w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
+        <div className=" lg:h-[149px] lg:flex-1 w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#fff]">
               <img src="/icon/inter/ai.svg" alt="icon" />
@@ -118,7 +118,7 @@ const Interviews = () => {
             </p>
           </div>
         </div>
-        <div className="lg:w-[220px] lg:h-[149px] w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
+        <div className=" lg:h-[149px] lg:flex-1 w-[200px] h-[165px] flex-shrink-0 bg-[#F1F5F9] rounded-[24px] p-4 space-y-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#fff]">
               <img src="/icon/inter/ready.svg" alt="icon" />
@@ -135,7 +135,7 @@ const Interviews = () => {
           </div>
         </div>
 
-        <div className="relative lg:w-[220px] lg:h-[149px] w-[200px] h-[165px] flex-shrink-0 rounded-[24px] p-0.5  bg-[linear-gradient(40deg,#4342FF,#FF6829)] bg-opacity-10">
+        <div className="relative  lg:h-[149px] lg:flex-1 w-[200px] h-[165px] flex-shrink-0 rounded-[24px] p-0.5  bg-[linear-gradient(40deg,#4342FF,#FF6829)] bg-opacity-10">
           <div className="relative rounded-[22px] bg-[#F1F5F9] w-full h-full p-3 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-tr from-[#4342FF] to-[#FF6829] opacity-10"></div>
             <div className="space-y-5">
@@ -162,8 +162,8 @@ const Interviews = () => {
       <div className="mt-6 md:block hidden">
         <p className="text-[24px] font-bold text-[#020618] mb-6">Ярилцлагууд</p>
 
-        <div className="overflow-hidden rounded-[16px] border border-[#E5E7EB]">
-          <table className="min-w-full table-auto">
+        <div className="overflow-x-auto overflow-y-hidden rounded-[16px] border border-[#E5E7EB]">
+          <table className="min-w-max w-full table-auto">
             <thead>
               <tr className="border-b bg-[#F8FAFC] px-3">
                 <th className="py-2">
@@ -184,21 +184,28 @@ const Interviews = () => {
                     <FaChevronDown />
                   </button>
                 </th>
-                <th className="py-2 lg:table-row md:hidden">
+
+                {/* Last 3 columns hidden below lg */}
+                <th className="py-2 lg:table-cell hidden">
                   <button className="text-[#020618] flex items-center gap-1 py-2.5 pe-3 ps-4 font-normal">
                     Шинэ → Өмнөх
                     <img src="/icon/ascendant.svg" alt="icon" />
                   </button>
                 </th>
-                <th className="py-2 lg:table-row md:hidden">
+                <th className="py-2 lg:table-cell hidden">
                   <button className="text-[#020618] flex items-center gap-1 py-2.5 pe-3 ps-4 font-normal">
                     Асуултууд
                   </button>
                 </th>
-                <th className="py-2 lg:table-row md:hidden">
+                <th className="py-2 lg:table-cell hidden">
                   <button className="text-[#020618] flex items-center gap-1 py-2.5 pe-3 ps-4 font-normal">
                     Хариултууд
                   </button>
+                </th>
+
+                {/* New column for button */}
+                <th className="py-2">
+                  <span className="sr-only">Action</span>
                 </th>
               </tr>
             </thead>
@@ -206,9 +213,9 @@ const Interviews = () => {
               {data?.map((item, index) => (
                 <tr
                   key={index}
-                  className={`hover:bg-gray-50 last:rounded-b-[16px] `}
+                  className="hover:bg-gray-50 last:rounded-b-[16px] group"
                 >
-                  <td className="py-3 ps-3 flex items-center gap-2">
+                  <td className="py-3 ps-3 flex items-center gap-2 min-w-[250px]">
                     <div className="w-9 h-9 rounded-full border">
                       <img
                         src={item.logo}
@@ -234,7 +241,7 @@ const Interviews = () => {
                     </p>
                   </td>
 
-                  <td className="py-3 ps-2">
+                  <td className="py-2 px-3 min-w-[120px]">
                     <div className="inline-block text-[#020618] text-sm py-1 px-2 rounded-[99px] border border-[#CAD5E2]">
                       {item.interview === "me"
                         ? "Би өөрөө ярилцсан"
@@ -243,8 +250,7 @@ const Interviews = () => {
                         : "Ярилцаагүй"}
                     </div>
                   </td>
-
-                  <td className="py-3 ps-2">
+                  <td className="py-2 px-3 min-w-[120px]">
                     <div className="inline-block text-[#020618] text-sm py-1 px-2 rounded-[99px] border border-[#CAD5E2]">
                       {item.isInterested
                         ? "Намайг сонирхосон"
@@ -252,22 +258,31 @@ const Interviews = () => {
                     </div>
                   </td>
 
-                  <td className="py-3 ps-2 lg:table-cell hidden">
+                  {/* Last 3 columns hidden below lg */}
+                  <td className="py-2 px-3 lg:table-cell hidden min-w-[100px]">
                     <div className="inline-block text-[#020618] text-sm py-1 px-2 rounded-[99px] border border-[#CAD5E2]">
                       {item.isNew}
                     </div>
                   </td>
-
-                  <td className="py-3 ps-2 lg:table-cell hidden">
+                  <td className="py-2 px-3 lg:table-cell hidden min-w-[100px]">
                     <div className="inline-block text-[#020618] text-sm py-1 px-2 rounded-[99px] border border-[#CAD5E2]">
                       {item.questionNumber}
                     </div>
                   </td>
-
-                  <td className="py-3 ps-2 lg:table-cell hidden">
+                  <td className="py-2 px-3 lg:table-cell hidden min-w-[100px]">
                     <div className="inline-block text-[#020618] text-sm py-1 px-2 rounded-[99px] border border-[#CAD5E2]">
                       {item.answerNumber}
                     </div>
+                  </td>
+
+                  {/* New column with right arrow button */}
+                  <td className="py-2 px-3 text-center min-w-[40px]">
+                    <button
+                      className="text-[#020618] hover:text-[#020618] border-2 border-transparent group-hover:border-[#E2E8F0] bg-[#fff] w-8 h-8 text-base rounded-full flex items-center justify-center"
+                      group
+                    >
+                      <FaChevronRight />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -368,7 +383,7 @@ const Interviews = () => {
         onDragEnd={handleDragEnd}
         animate={{ y: showFilter ? 0 : "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl px-4 pt-4 pb-12 z-40 shadow-xl"
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl px-4 pt-4 pb-12 z-40 shadow-xl"
       >
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
 

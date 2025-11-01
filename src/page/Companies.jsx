@@ -7,16 +7,17 @@ import { MdOutlineRefresh } from "react-icons/md";
 import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 
 export default function Companies() {
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedFilters, setSelectedFilters] = useState(["all"]);
   const [showFilter, setShowFilter] = useState(false);
   const y = useMotionValue(0);
   const drawerRef = useRef(null);
 
   // 🔍 Filtered companies logic
-  const filteredCompanies =
-    selectedFilter === "all"
-      ? companiesData
-      : companiesData.filter((company) => company.category === selectedFilter);
+  const filteredCompanies = selectedFilters.includes("all")
+    ? companiesData
+    : companiesData.filter((company) =>
+        selectedFilters.includes(company.category)
+      );
 
   const handleDragEnd = (_, info) => {
     if (info.offset.y > 100) setShowFilter(false);
@@ -48,33 +49,79 @@ export default function Companies() {
           <p className="font-bold text-[#020618] mb-4">
             Үйл ажиллагааны чиглэл
           </p>
-          <div className="space-y-2">
+          <div>
             {/* “All” button */}
             <button
-              onClick={() => setSelectedFilter("all")}
-              className={`text-sm ps-2 min-h-10 w-full flex items-center gap-2 text-start ${
-                selectedFilter === "all"
+              onClick={() => {
+                if (selectedFilters.includes("all")) return;
+                setSelectedFilters(["all"]);
+              }}
+              className={`group relative text-sm hover:ms-2 ps-2 min-h-10 w-full flex items-center text-start transition-all duration-300 ${
+                selectedFilters.includes("all")
                   ? "text-[#020618] font-bold"
-                  : "text-[#45556C]"
+                  : "text-[#45556C] hover:text-[#020618]"
               }`}
             >
-              {selectedFilter === "all" && <FaChevronRight size={16} />}
-              Бүх компаниуд
+              <span
+                className={`absolute left-0 flex items-center transition-all duration-300 ${
+                  selectedFilters.includes("all")
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"
+                }`}
+              >
+                <FaChevronRight size={16} />
+              </span>
+
+              <span
+                className={`transition-all duration-300 ${
+                  selectedFilters.includes("all")
+                    ? "translate-x-4"
+                    : "group-hover:translate-x-4"
+                }`}
+              >
+                Бүх компаниуд
+              </span>
             </button>
 
             {/* Category buttons */}
             {cat.categories?.map((item, index) => (
               <button
                 key={index}
-                onClick={() => setSelectedFilter(item)}
-                className={`text-sm ps-2 min-h-10 w-full flex items-center gap-2 text-start ${
-                  selectedFilter === item
+                onClick={() => {
+                  setSelectedFilters((prev) => {
+                    const newFilters = [...prev.filter((f) => f !== "all")];
+                    if (prev.includes(item)) {
+                      return newFilters.filter((f) => f !== item);
+                    } else {
+                      return [...newFilters, item];
+                    }
+                  });
+                }}
+                className={`group relative text-sm hover:ms-2 ps-2 py-[15px] w-full flex items-center text-start transition-all duration-300 ${
+                  selectedFilters.includes(item)
                     ? "text-[#020618] font-bold"
-                    : "text-[#45556C]"
+                    : "text-[#45556C] hover:text-[#020618]"
                 }`}
               >
-                {selectedFilter === item && <FaChevronRight size={16} />}
-                {item}
+                <span
+                  className={`absolute left-0 flex items-center transition-all duration-300 ${
+                    selectedFilters.includes(item)
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"
+                  }`}
+                >
+                  <FaChevronRight size={16} />
+                </span>
+
+                <span
+                  className={`transition-all duration-300 ${
+                    selectedFilters.includes(item)
+                      ? "translate-x-4"
+                      : "group-hover:translate-x-4"
+                  }`}
+                >
+                  {item}
+                </span>
               </button>
             ))}
           </div>
@@ -177,7 +224,7 @@ export default function Companies() {
           {filteredCompanies.map((company) => (
             <div
               key={company.id}
-              className="bg-white md:border border-b border-[#CAD5E2] md:rounded-[16px] p-4 hover:shadow-md transition"
+              className="bg-white md:border border-b border-[#CAD5E2] md:rounded-[16px] p-4  transition hover:border-[#020618]"
             >
               <div className="flex md:items-start items-center justify-between">
                 <div className="md:block flex items-center gap-2">
@@ -240,7 +287,7 @@ export default function Companies() {
         onDragEnd={handleDragEnd}
         animate={{ y: showFilter ? 0 : "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl px-4 pt-4 pb-12 z-40 shadow-xl"
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl px-4 pt-4 pb-12 z-40 shadow-xl"
       >
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4"></div>
 

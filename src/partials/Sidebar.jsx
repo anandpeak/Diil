@@ -16,13 +16,17 @@ const Sidebar = () => {
     if (current) {
       setSelectedMenu(current.id);
     }
+
+    if (window.innerWidth < 768) {
+      setSidebar(false);
+    }
   }, [location.pathname]);
 
   return (
     <div
-      className={`px-[16px] py-[20px] border-r border-[#CAD5E2] h-screen flex flex-col justify-between transition-all duration-300 bg-[#fff] ${
-        sidebar ? "w-[14.75rem]" : "w-[5rem]"
-      }`}
+      className={`px-[16px] py-[20px] border-r border-[#CAD5E2] h-screen flex flex-col justify-between  bg-[#fff]
+    ${sidebar ? "sm:w-[14.75rem] w-full" : "w-[5rem] sm:w-[5rem]"}
+  `}
     >
       <div className="flex flex-col gap-[32px]">
         <div className="flex items-center justify-between">
@@ -33,7 +37,7 @@ const Sidebar = () => {
               }}
               src="/img/logo/logo.svg"
               alt="logo"
-              className={`transition-opacity duration-300 cursor-pointer `}
+              className={`transition-opacity duration-100 cursor-pointer `}
             />
           ) : (
             <img
@@ -42,7 +46,7 @@ const Sidebar = () => {
               }}
               src="/img/logo/logoc.svg"
               alt="logo"
-              className={`transition-opacity duration-300 cursor-pointer`}
+              className={`transition-opacity duration-100 cursor-pointer`}
             />
           )}
           <button
@@ -64,7 +68,7 @@ const Sidebar = () => {
               sidebar ? "gap-2" : "justify-center"
             }`}
           >
-            <div className="flex items-center justify-center bg-[#1D293D] group-hover:bg-[#0F172B] rounded-full p-2 transition-all duration-300">
+            <div className="flex items-center justify-center bg-[#1D293D] group-hover:bg-[#0F172B] rounded-full p-2 transition-all duration-300 text-center">
               <img
                 src="/icon/voice.svg"
                 alt="icon"
@@ -77,7 +81,9 @@ const Sidebar = () => {
               />
             </div>
             {sidebar && (
-              <span className="whitespace-nowrap">Ярилцлага өгөх</span>
+              <p className="text-center md:w-auto w-full md:me-0 me-14">
+                Ярилцлага өгөх
+              </p>
             )}
           </button>
         </div>
@@ -111,43 +117,65 @@ const Sidebar = () => {
           ))}
         </div>
       </div>
-      <div>
-        <div
-          onClick={() => {
-            navigate("/contact");
-          }}
-          className={`w-full p-1 flex items-center hover:bg-[#E2E8F0] transition-all duration-300 rounded-[999px] cursor-pointer group ${
-            sidebar ? "gap-2" : "justify-center"
-          }`}
-        >
-          <div className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent bg-[#fff]">
-            <RxEnvelopeClosed size={20} />
-          </div>
-          {sidebar && (
-            <p className={`text-[#020618] whitespace-nowrap `}>Холбогдох</p>
-          )}
-        </div>
-
+      {sidebar ? (
         <div>
+          {/* Contact */}
           <div
-            onClick={() => {
-              navigate("/feedback");
-            }}
-            className={`w-full p-1 flex items-center hover:bg-[#E2E8F0] transition-all duration-300 rounded-[999px] cursor-pointer group ${
+            onClick={() => navigate("/contact")}
+            className={`w-full p-1 flex items-center hover:bg-[#E2E8F0]duration- rounded-[999px] cursor-pointer ${
+              sidebar ? "gap-2" : "justify-center"
+            }`}
+          >
+            <div className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent bg-[#fff]">
+              <RxEnvelopeClosed size={20} />
+            </div>
+            <p className="text-[#020618] whitespace-nowrap">Холбогдох</p>
+          </div>
+
+          {/* Feedback */}
+          <div
+            onClick={() => navigate("/feedback")}
+            className={`w-full p-1 flex items-center hover:bg-[#E2E8F0]duration- rounded-[999px] cursor-pointer ${
               sidebar ? "gap-2" : "justify-center"
             }`}
           >
             <div className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent bg-[#fff]">
               <PiWarningOctagon size={20} />
             </div>
-            {sidebar && (
-              <p className={`text-[#020618] whitespace-nowrap `}>
-                Санал хүсэлт
-              </p>
-            )}
+            <p className="text-[#020618] whitespace-nowrap">Санал хүсэлт</p>
           </div>
         </div>
-      </div>
+      ) : (
+        <div>
+          {/* Contact (icon only) */}
+          <div
+            onClick={() => {
+              navigate("/contact");
+            }}
+            className={` p-1 flex items-center hover:bg-[#E2E8F0]duration- rounded-[999px] cursor-pointer w-[47px] h-[47px] ${
+              sidebar ? "gap-2" : "justify-center"
+            }`}
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-transparent bg-[#fff]">
+              <RxEnvelopeClosed size={20} />
+            </div>
+          </div>
+
+          {/* Feedback (icon only) */}
+          <div
+            onClick={() => {
+              navigate("/feedback");
+            }}
+            className={` p-1 flex items-center hover:bg-[#E2E8F0]duration- rounded-[999px] cursor-pointer w-[47px] h-[47px] ${
+              sidebar ? "gap-2" : "justify-center"
+            }`}
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-transparent bg-[#fff]">
+              <PiWarningOctagon size={20} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   IoIosArrowDown,
   IoIosArrowForward,
@@ -30,13 +30,13 @@ const LikeButton = ({ initialLiked }) => {
 
   return (
     <button
-      className="rounded-full h-[2rem] w-[2rem] flex items-center justify-center bg-[#fff]"
+      className="rounded-full h-10 w-10 flex items-center justify-center bg-[#fff]"
       onClick={() => setIsLiked((prev) => !prev)}
     >
       {isLiked ? (
-        <IoMdHeart className="text-red-500 lg:text-base text-2xl" />
+        <IoMdHeart className="text-red-500 lg:text-base" />
       ) : (
-        <IoMdHeartEmpty className="text-[#020618] lg:text-base text-2xl" />
+        <IoMdHeartEmpty className="text-[#020618] lg:text-base" />
       )}
     </button>
   );
@@ -47,6 +47,12 @@ const Home = () => {
   const [isAscending, setIsAscending] = useState(true);
   const [filter, setFilter] = useState("date");
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 10;
+  const containerRef = useRef(null);
+
+  const [displayedWorks, setDisplayedWorks] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let sorted = [...works];
@@ -69,6 +75,36 @@ const Home = () => {
 
     setSortedWorks(sorted);
   }, [filter, isAscending]);
+
+  useEffect(() => {
+    const initialWorks = sortedWorks.slice(0, ITEMS_PER_PAGE);
+    setDisplayedWorks(initialWorks);
+  }, [sortedWorks]);
+
+  const handleScroll = () => {
+    if (!containerRef.current || loading) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      loadMore();
+    }
+  };
+
+  const loadMore = () => {
+    setLoading(true);
+    const nextPage = page + 1;
+    const start = (nextPage - 1) * ITEMS_PER_PAGE;
+    const end = nextPage * ITEMS_PER_PAGE;
+
+    const moreWorks = sortedWorks.slice(start, end);
+
+    if (moreWorks.length > 0) {
+      setDisplayedWorks((prev) => [...prev, ...moreWorks]);
+      setPage(nextPage);
+    }
+
+    setLoading(false);
+  };
 
   const handleClick = () => {
     setIsAscending((prev) => !prev);
@@ -141,18 +177,16 @@ const Home = () => {
       </div>
 
       {/* filter */}
-      <div className="flex items-center justify-between pb-4 lg:w-[72%] md:w-full  gap-2 md:pb-4 md:pt-0 md:px-0 p-4">
+      <div className="flex items-center justify-between w-full  pb-4 lg:w-[72%] gap-2 md:pb-4 md:pt-0 md:px-0 p-4">
         {/* front 3 filter */}
         <div className="flex items-center gap-3">
           <div className="flex items-center md:gap-2.5 gap-2">
             <button
-              onClick={() => {
-                setFilter("time");
-              }}
-              className={`text-[#020618] lg:px-4 lg:py-2 px-3 py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm transition-all duration-300 ${
+              onClick={() => setFilter("time")}
+              className={`md:w-full md:flex-0 flex-1 text-[#020618] lg:px-4 lg:py-2 px-3 py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm transition-all duration-300 ${
                 filter === "time"
-                  ? "md:border-2 border border-[#020618]"
-                  : "md:border-2 border border-[#CAD5E2]"
+                  ? "md:border-1 border border-[#020618]"
+                  : "md:border-1 border border-[#CAD5E2]"
               } hover:bg-[#E2E8F0]`}
             >
               Хугацаагаар
@@ -162,15 +196,16 @@ const Home = () => {
                 setFilter("salary");
                 setIsAscending((prev) => !prev);
               }}
-              className={`text-[#020618] lg:px-4 lg:py-2 px-3 py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm transition-all duration-300 ${
+              className={`w-full md:flex-0 flex-1 text-[#020618] lg:px-4 lg:py-2 px-3 py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm transition-all duration-300 ${
                 filter === "salary"
-                  ? "md:border-2 border border-[#020618]"
-                  : "md:border-2 border border-[#CAD5E2]"
+                  ? "md:border-1 border border-[#020618]"
+                  : "md:border-1 border border-[#CAD5E2]"
               } hover:bg-[#E2E8F0]`}
             >
               Цалингаар
             </button>
           </div>
+
           <div className="md:block hidden h-4 w-[1px] bg-[#CAD5E2]" />
           <div className="md:flex hidden items-center md:gap-2.5 gap-2">
             <button
@@ -179,8 +214,8 @@ const Home = () => {
               }}
               className={`text-[#020618] lg:px-4 lg:py-2 px-3 py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm flex items-center gap-1.5 transition-all duration-300 ${
                 filter === "activity"
-                  ? "md:border-2 border border-[#020618]"
-                  : "md:border-2 border border-[#CAD5E2]"
+                  ? "md:border-1 border border-[#020618]"
+                  : "md:border-1 border border-[#CAD5E2]"
               } hover:bg-[#E2E8F0]`}
             >
               Үйл ажиллагаа <IoIosArrowDown className="text-[16px] mt-1" />
@@ -191,8 +226,8 @@ const Home = () => {
               }}
               className={`text-[#020618] lg:px-4 lg:py-2 md:px-3 md:py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm flex items-center gap-1.5 transition-all duration-300 ${
                 filter === "culture"
-                  ? "md:border-2 border border-[#020618]"
-                  : "md:border-2 border border-[#CAD5E2]"
+                  ? "md:border-1 border border-[#020618]"
+                  : "md:border-1 border border-[#CAD5E2]"
               } hover:bg-[#E2E8F0]`}
             >
               Соёл <IoIosArrowDown className="text-[16px] mt-1" />
@@ -207,12 +242,11 @@ const Home = () => {
             onClick={handleClick}
             className={`text-[#020618] lg:px-4 lg:py-2 md:px-3 md:py-1.5 rounded-[999px] bg-[#fff] lg:text-base md:text-sm md:flex hidden items-center gap-1.5 transition-all duration-300 ${
               filter === "date"
-                ? "md:border-2 border border-[#020618]"
-                : "md:border-2 border border-[#CAD5E2]"
+                ? "md:border-1 border border-[#020618]"
+                : "md:border-1 border border-[#CAD5E2]"
             } hover:bg-[#E2E8F0]`}
           >
             {isAscending ? "Шинэ → Хуучин" : "Шинэ ← Хуучин"}
-            <img src="/icon/ascendant.svg" alt="icon" />
           </button>
           <button
             onClick={() => {
@@ -220,8 +254,8 @@ const Home = () => {
             }}
             className={`text-[#020618] rounded-full bg-[#fff] text-sm md:hidden flex items-center justify-center transition-all duration-300 w-[2.25rem] h-[2.25rem] ${
               filter === "options"
-                ? "md:border-2 border border-[#020618]"
-                : "md:border-2 border border-[#CAD5E2]"
+                ? "md:border-1 border border-[#020618]"
+                : "md:border-1 border border-[#CAD5E2]"
             } hover:bg-[#E2E8F0]`}
           >
             <CgOptions />
@@ -230,8 +264,8 @@ const Home = () => {
             onClick={handleClick}
             className={`text-[#020618] rounded-full bg-[#fff] text-sm md:hidden flex items-center justify-center transition-all duration-300 w-[2.25rem] h-[2.25rem] ${
               filter === "date"
-                ? "md:border-2 border border-[#020618]"
-                : "md:border-2 border border-[#CAD5E2]"
+                ? "md:border-1 border border-[#020618]"
+                : "md:border-1 border border-[#CAD5E2]"
             } hover:bg-[#E2E8F0]`}
           >
             <img src="/icon/ascendant.svg" alt="icon" />
@@ -243,12 +277,15 @@ const Home = () => {
       <div className="lg:flex md:block gap-5  lg:h-[calc(100vh-11rem)]">
         {/* desktop tablet table */}
         <div className="lg:w-[72%] w-full md:flex hidden flex-col lg:h-full h-[70vh] lg:mb-0 md:mb-4">
-          <div className="flex-1 border border-[#CAD5E2] rounded-[24px] overflow-y-auto">
+          <div className="flex-1 border border-[#CAD5E2] rounded-[24px] overflow-y-auto scrollbar-hide">
             {sortedWorks.map((items, index) => {
               return (
                 <div
                   key={index}
                   className="w-full py-4 ps-4 pe-2 gap-6 flex justify-between items-center cursor-pointer hover:bg-[#F1F5F9] group"
+                  onClick={() => {
+                    navigate("/chat");
+                  }}
                 >
                   <div className="flex items-center gap-[13px]">
                     <img
@@ -285,10 +322,7 @@ const Home = () => {
 
                     {/* Ярилцлага button */}
                     <button
-                      onClick={() => {
-                        navigate("/chat");
-                      }}
-                      className="group relative rounded-[99px] pe-1 ps-2.5 py-1 flex items-center gap-2 
+                      className="group relative rounded-[99px] pe-1 ps-4 py-1 flex items-center gap-2 
                            bg-transparent text-[#020618] 
                            hover:bg-[#29EAFF] hover:text-[#0F172B]
                            group-hover:bg-[#020618] group-hover:text-white
@@ -311,64 +345,68 @@ const Home = () => {
           </div>
         </div>
         {/* phone table */}
-        <div className="block md:hidden w-full h-[90vh] overflow-y-auto">
-          {sortedWorks.map((items, index) => (
-            <div className="p-4 border-b border-[#CAD5E2]" key={index}>
+        <div
+          ref={containerRef}
+          className="block md:hidden w-full overflow-y-auto scrollbar-hide"
+          onScroll={handleScroll}
+        >
+          {displayedWorks.map((items, index) => (
+            <div
+              onClick={() => navigate("/chat")}
+              className="p-4 border-b border-[#CAD5E2]"
+              key={index}
+            >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-full border border-[#CAD5E2]">
-                  <img
-                    className="w-full h-full object-fill"
-                    src={items.logo}
-                    alt="logo"
-                  />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full border border-[#CAD5E2]">
+                    <img
+                      className="w-full h-full object-fill"
+                      src={items.logo}
+                      alt="logo"
+                    />
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#020618] max-w-[150px] truncate text-sm">
+                      {items.name}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className="text-[#62748E] text-xs truncate max-w-[70px]">
+                        {items.companyName}
+                      </p>
+                      <p className="text-[#62748E] text-xs truncate max-w-[70px]">
+                        {getTimeAgo(items.createdDate)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-[#020618] text-sm font-bold">
+                <div className="flex items-center ">
+                  <p className="text-[#020618] text-xs font-bold">
                     {formatSalary(items.salary)}
                   </p>
                   <LikeButton initialLiked={items.isLiked} />
-                </div>
-              </div>
-              <div className="mt-3">
-                <p className="font-bold text-[#020618] w-[80%] truncate">
-                  {items.name}
-                </p>
-                <div className="flex items-center gap-3">
-                  <p className="text-[#62748E] text-xs truncate max-w-[20%]">
-                    {items.companyName}
-                  </p>
-                  <p className="text-[#62748E] text-xs">
-                    {getTimeAgo(items.createdDate)}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-end justify-between mt-2">
-                <p className="text-[#62748E] text-xs w-[10.25rem] truncate">
-                  {items.location}
-                </p>
-                <button
-                  onClick={() => {
-                    navigate("/chat");
-                  }}
-                  className="group relative rounded-[99px] pe-1 ps-2.5 py-1 flex items-center gap-2 
-                           bg-[#E2E8F0] text-[#020618] 
-                           hover:bg-[#29EAFF] hover:text-[#0F172B]
-                           group-hover:bg-[#020618] group-hover:text-white
-                           transition-colors duration-300"
-                >
-                  Ярилцлага
-                  <div
-                    className="w-[2rem] h-[2rem] rounded-full flex items-center justify-center 
-                          bg-[#fff] text-[#020618] 
-                          group-hover:bg-[#1D293D] group-hover:text-white 
-                          transition-colors duration-300"
+                  <button
+                    className="group relative rounded-[99px] pe-1 ps-1 py-1 flex items-center gap-2 
+                         bg-[#E2E8F0]
+                         hover:bg-[#020618] 
+                         group-hover:bg-[#020618] group-hover:text-white
+                         transition-colors duration-300"
                   >
-                    <IoIosArrowForward className="text-sm" />
-                  </div>
-                </button>
+                    <div
+                      className="w-[2rem] h-[2rem] rounded-full flex items-center justify-center 
+                      bg-[#fff]
+                      group-hover:bg-[#1D293D] group-hover:text-white 
+                      transition-colors duration-300"
+                    >
+                      <IoIosArrowForward className="text-sm" />
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
+          {loading && (
+            <p className="text-center my-2 text-gray-500">Loading...</p>
+          )}
         </div>
 
         {/* desktop left side */}
@@ -376,11 +414,11 @@ const Home = () => {
           <div className="flex-1">
             <div className="flex lg:flex-col md:flex-row md:gap-[14px] lg:gap-4 lg:h-auto md:h-[211px] lg:mb-4 md:mb-0">
               {/* Top Two Cards */}
-              <div className="flex items-center justify-between lg:gap-2.5 md:gap-[14px]">
+              <div className="flex items-stretch justify-between lg:gap-2.5 md:gap-[14px]">
                 {/* Card 1 */}
-                <div className="bg-[#F1F5F9] rounded-[24px] p-4 gap-6 w-[50%] lg:h-[9.2rem] h-full flex flex-col justify-between">
+                <div className="bg-[#F1F5F9] rounded-[24px] p-4 gap-6 w-[50%] flex flex-col flex-1">
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 bg-[#fff] rounded-full flex items-center justify-center ">
+                    <div className="w-10 h-10 bg-[#fff] rounded-full flex items-center justify-center">
                       <EyeIcon className="text-[24px]" />
                     </div>
                     <IoIosArrowForward className="text-[18px] cursor-pointer" />
@@ -394,9 +432,9 @@ const Home = () => {
                 </div>
 
                 {/* Card 2 */}
-                <div className="bg-[#F1F5F9] rounded-[24px] p-4 gap-6 w-[50%] lg:h-[9.2rem] h-full flex flex-col justify-between">
+                <div className="bg-[#F1F5F9] rounded-[24px] p-4 gap-6 w-[50%] flex flex-col flex-1">
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 bg-[#fff] rounded-full flex items-center justify-center ">
+                    <div className="w-10 h-10 bg-[#fff] rounded-full flex items-center justify-center">
                       <EyeIcon className="text-[24px]" />
                     </div>
                     <IoIosArrowForward className="text-[18px] cursor-pointer" />
@@ -413,8 +451,8 @@ const Home = () => {
               </div>
 
               {/* Top One Cards */}
-              <div className="relative rounded-3xl p-[3px] bg-[linear-gradient(40deg,#4342FF,#FF6829)] bg-opacity-10">
-                <div className="relative rounded-[22px] bg-white p-3 overflow-hidden">
+              <div className="relative rounded-[16px] p-[3px] bg-[linear-gradient(40deg,#4342FF,#FF6829)] bg-opacity-10">
+                <div className="relative rounded-[14px] bg-white p-3 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-tr from-[#4342FF] to-[#FF6829] opacity-10"></div>
                   <div className="relative">
                     <div className="flex items-center justify-between lg:mb-6 mb-3">
@@ -446,7 +484,7 @@ const Home = () => {
             {/* Section Title */}
             <div className="lg:block md:hidden">
               <h3 className="font-bold text-[#020618] ">Онцгой зар</h3>
-              <div className="flex-1 overflow-y-auto gap-4 mt-2 space-y-4 min-h-[300px]">
+              <div className="mt-2 space-y-4  overflow-y-scroll h-[190px] flex-1 scrollbar-hide">
                 {jobs.map((job, index) => (
                   <SpecialOffer job={job} key={index} />
                 ))}

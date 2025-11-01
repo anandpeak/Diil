@@ -3,16 +3,16 @@ import { IoIosArrowForward } from "react-icons/io";
 const SpecialOffer = ({ job }) => {
   return (
     <div
-      className="relative rounded-2xl p-[2px] 
+      className="relative rounded-[16px] p-[2px] 
              md:min-w-[350px]  
              lg:w-full lg:min-w-0 lg:shrink
              w-full min-w-0 shrink"
       style={{ background: job.gradientMain }}
     >
-      <div className="relative rounded-2xl bg-white p-2.5">
+      <div className="relative rounded-[14px] bg-white p-2.5">
         {/* Overlay gradient */}
         <div
-          className="absolute inset-0 opacity-10 rounded-2xl pointer-events-none"
+          className="absolute inset-0 opacity-10 rounded-[14px] pointer-events-none"
           style={{ background: job.gradientOverlay }}
         ></div>
 

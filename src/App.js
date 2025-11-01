@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 import { SidebarProvider } from "./context/SidebarContext";
 import { UserProvider } from "./context/userContext";
@@ -14,6 +15,9 @@ import Feedback from "./page/Feedback";
 import Game from "./page/Game";
 import Games from "./page/game/Games";
 import Leaderboard from "./page/game/Leaderboard";
+
+// Lazy load ArrowGame to avoid blocking the main bundle
+const ArrowGame = lazy(() => import("./page/game/arrow/ArrowGame"));
 
 function App() {
   return (
@@ -44,13 +48,16 @@ function App() {
                   <Route path="allgame" element={<Games />} />
                   <Route path="leaderboard" element={<Leaderboard />} />
                 </Route>
-
-                <Route path="/arrow" element={<Game />}>
-                  <Route index element={<Game />} />
-                  <Route path="allgame" element={<Games />} />
-                  <Route path="leaderboard" element={<Leaderboard />} />
-                </Route>
               </Route>
+
+              <Route
+                path="/games/arrow"
+                element={
+                  <Suspense fallback={<div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+                    <ArrowGame />
+                  </Suspense>
+                }
+              />
             </Routes>
           </Router>
           <ToastContainer />

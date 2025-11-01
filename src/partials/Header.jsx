@@ -8,10 +8,10 @@ function ExpandingSearch() {
   return (
     <div className="flex items-center ">
       <div className="relative group">
-        <div className="flex items-center bg-[#F1F5F9] rounded-full shadow-md transition-all duration-300 md:w-[20rem] w-[13rem] h-[2.5rem] md:group-hover:w-[26.25rem] p-1">
-          <div className="flex items-center justify-center w-[2rem] h-[2rem] bg-[#fff] rounded-full cursor-pointer ">
+        <div className="flex items-center bg-[#F1F5F9] rounded-full transition-all duration-300 md:w-[20rem] flex-1 h-[3rem] md:group-hover:w-[26.25rem] p-1">
+          <div className="flex items-center justify-center w-[2.5rem] h-[2.5rem] bg-[#fff] rounded-full cursor-pointer ">
             <svg
-              className="w-[1rem] h-[1rem] text-[#020618]"
+              className="w-[1.5rem] h-[1.5rem] text-[#020618]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -28,8 +28,9 @@ function ExpandingSearch() {
           <input
             type="text"
             placeholder="Хайх"
-            className="flex-1 bg-transparent outline-none text-[#020618] md:pr-10 md:ps-2 pr-4 ps-2 text-center md:text-[16px] text-sm w-[80%]"
+            className="flex-1 bg-transparent outline-none text-[#020618] px-3 text-center md:text-[16px] text-sm w-[80%]"
           />
+          <div className="flex items-center justify-center w-[2.5rem] h-[2.5rem] opacity-0asdf rounded-full cursor-pointer "></div>
         </div>
       </div>
     </div>
@@ -76,14 +77,14 @@ const Header = () => {
       </button>
       <div className="flex lg:hidden items-center gap-2">
         {" "}
-        <button className="p-2 flex items-center justify-center rounded-full border-2 border-transparent hover:border-[#E2E8F0]">
+        <button className="flex items-center justify-center rounded-full border-2 border-transparent hover:border-[#E2E8F0] w-10 h-10">
           <img src="/icon/user.svg" alt="user" />
         </button>
         <button
           onClick={() => setSidebar(!sidebar)}
-          className="p-2 flex items-center justify-center rounded-full border-2 border-transparent hover:border-[#E2E8F0]"
+          className="flex items-center justify-center rounded-full border-2 border-transparent hover:border-[#E2E8F0] w-10 h-10"
         >
-          <FiMenu className="text-[20px]" />
+          <img src="/icon/menu.svg" alt="menu" />
         </button>
       </div>
     </div>
