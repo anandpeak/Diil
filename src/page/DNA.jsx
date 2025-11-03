@@ -15,7 +15,6 @@ const DNA = () => {
       setImage(URL.createObjectURL(e.target.files[0]));
     }
   };
-
   const pageTitles = [
     {
       title: "What I work for",
