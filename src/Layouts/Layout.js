@@ -23,18 +23,19 @@ const Layout = () => {
   // Track scroll position
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0); // header becomes fixed when scrollY > 0
+      setIsScrolled(window.scrollY > 0);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Determine if header should be hidden
+  // Determine if header should be hidden or not fixed
   const hideHeader = isMobile && location.pathname.startsWith("/chat");
+  const isChatPage = location.pathname.startsWith("/chat");
 
   return (
     <div className="flex w-full overflow-hidden min-h-[calc(var(--vh,1vh)*100)]">
-      {/* Desktop Sidebar - fixed on left */}
+      {/* Desktop Sidebar */}
       <aside
         className={`hidden lg:block fixed left-0 top-0 h-screen transition-all duration-100 z-40 ${
           sidebar ? "w-[14.75rem]" : "w-[5rem]"
@@ -43,14 +44,13 @@ const Layout = () => {
         <Sidebar />
       </aside>
 
-      {/* Mobile/Tablet Sidebar - slides from right */}
-
+      {/* Mobile Sidebar */}
       <aside
         className={`lg:hidden fixed top-0 h-screen transition-transform duration-100 z-50
-    ${sidebar ? "translate-x-0" : "translate-x-full"}
-    ${isMobile ? "w-full" : "w-[14.75rem]"}
-    right-0
-  `}
+          ${sidebar ? "translate-x-0" : "translate-x-full"}
+          ${isMobile ? "w-full" : "w-[14.75rem]"}
+          right-0
+        `}
       >
         <Sidebar />
       </aside>
@@ -63,17 +63,17 @@ const Layout = () => {
         />
       )}
 
-      {/* Main content area */}
+      {/* Main content */}
       <div
         className={`flex-1 w-full transition-all duration-300 ${
           sidebar ? "lg:ml-[14.75rem]" : "lg:ml-[5rem]"
         }`}
       >
-        {/* Header will hide if on chat page on phone */}
+        {/* Header — never fixed on chat pages */}
         {!hideHeader && (
           <div
             className={`w-full ${
-              isScrolled
+              isScrolled && !isChatPage
                 ? `fixed top-0 z-30 md:border-b border-[#CAD5E2] ${
                     sidebar
                       ? "lg:w-[calc(100%-14.75rem)]"
@@ -87,7 +87,9 @@ const Layout = () => {
         )}
 
         <main
-          className={`${isScrolled ? "pt-[var(--header-height,4rem)]" : ""}`}
+          className={`${
+            isScrolled && !isChatPage ? "pt-[var(--header-height,4rem)]" : ""
+          }`}
         >
           <Outlet />
         </main>
