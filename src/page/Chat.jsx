@@ -85,7 +85,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative ">
       {/* Messages Container */}
       <div
         ref={scrollRef}
