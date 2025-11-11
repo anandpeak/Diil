@@ -6,25 +6,39 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const scrollRef = useRef();
+  const inputRef = useRef();
 
   const myAvatar = "https://i.pravatar.cc/150?img=10"; // Default 'me' avatar
 
+  // Load chat messages
   useEffect(() => {
-    if (currentChat) {
-      setMessages(currentChat.messages);
-    }
+    if (currentChat) setMessages(currentChat.messages);
   }, [currentChat]);
 
+  // Always scroll to bottom when messages change
   useEffect(() => {
-    // Scroll to bottom whenever messages change
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // Scroll into view when keyboard opens (mobile)
+  useEffect(() => {
+    const handleFocus = () => {
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 300); // wait for keyboard animation
+    };
+    const inputEl = inputRef.current;
+    inputEl?.addEventListener("focus", handleFocus);
+    return () => inputEl?.removeEventListener("focus", handleFocus);
+  }, []);
+
   const handleSend = () => {
     if (!input.trim()) return;
-
     const newMessage = {
       sender: "me",
       text: input,
@@ -36,6 +50,7 @@ export default function Chat() {
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
 
+    // Auto reply
     setTimeout(() => {
       const reply = {
         sender: "other",
@@ -50,9 +65,7 @@ export default function Chat() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSend();
-    }
+    if (e.key === "Enter") handleSend();
   };
 
   if (!currentChat) return <div>Loading...</div>;
@@ -62,7 +75,7 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-4 p-4 pb-24 md:pt-20 pt-14 lg:pt-4"
+        className="flex-1 overflow-y-auto space-y-4 p-4 pb-24 md:pt-20 pt-14 lg:pt-4 scroll-smooth"
       >
         {messages.map((msg, index) => (
           <div
@@ -104,15 +117,16 @@ export default function Chat() {
         ))}
       </div>
 
-      {/* Input box fixed at bottom */}
-      <div className="absolute bottom-0 left-0 w-full p-4 ">
+      {/* Input bar */}
+      <div className="sticky bottom-0 left-0 w-full p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] bg-white/80 backdrop-blur-sm">
         <div className="flex justify-center">
-          <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px]">
+          <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
             <button className="h-10 w-10 bg-[#E2E8F0] rounded-full flex items-center justify-center text-[#020618]">
               <img src="/icon/chat/voice.svg" alt="icon" />
             </button>
 
             <input
+              ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
