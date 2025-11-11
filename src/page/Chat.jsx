@@ -1,28 +1,42 @@
-import { useOutletContext } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { Send, Image, Paperclip, Smile } from "lucide-react";
 
 export default function Chat() {
-  const { currentChat } = useOutletContext();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      sender: "other",
+      text: "Сайн уу! Энэ бүтээгдэхүүний талаар асуух зүйл байна уу?",
+      time: "10:30",
+    },
+    {
+      sender: "me",
+      text: "Сайн байна уу. Энэ зарын талаар дэлгэрэнгүй мэдээлэл авмаар байна.",
+      time: "10:32",
+    },
+    {
+      sender: "other",
+      text: "Мэдээж! Ямар мэдээлэл хэрэгтэй байна вэ?",
+      time: "10:32",
+    },
+    {
+      sender: "me",
+      text: "Үнэ болон хүргэлтийн нөхцөл сонирхож байна.",
+      time: "10:33",
+    },
+  ]);
   const [input, setInput] = useState("");
   const scrollRef = useRef();
   const inputRef = useRef();
 
-  const myAvatar = "https://i.pravatar.cc/150?img=10"; // Default 'me' avatar
+  const myAvatar = "https://i.pravatar.cc/150?img=10";
+  const otherAvatar = "https://i.pravatar.cc/150?img=5";
 
-  // Load chat messages
-  useEffect(() => {
-    if (currentChat) setMessages(currentChat.messages);
-  }, [currentChat]);
-
-  // Always scroll to bottom when messages change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Scroll into view when keyboard opens (mobile)
   useEffect(() => {
     const handleFocus = () => {
       setTimeout(() => {
@@ -30,7 +44,7 @@ export default function Chat() {
           top: scrollRef.current.scrollHeight,
           behavior: "smooth",
         });
-      }, 300); // wait for keyboard animation
+      }, 300);
     };
     const inputEl = inputRef.current;
     inputEl?.addEventListener("focus", handleFocus);
@@ -50,98 +64,115 @@ export default function Chat() {
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
 
-    // Auto reply
     setTimeout(() => {
       const reply = {
         sender: "other",
-        text: "This is the default reply.",
+        text: "Баярлалаа, таны асуултыг хүлээн авлаа.",
         time: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
       setMessages((prev) => [...prev, reply]);
-    }, 500);
+    }, 800);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleSend();
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
-  if (!currentChat) return <div>Loading...</div>;
-
   return (
-    <div className="relative w-full h-full bg-[#F1F5F9] flex flex-col">
-      {/* Messages */}
+    <div className="flex flex-col h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative">
+      {/* Messages Container */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto lg:px-6 px-4 space-y-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth max-h-[72vh]"
+        className="flex-1 overflow-y-auto px-4 py-6 space-y-4"
+        style={{ paddingBottom: "140px" }}
       >
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex items-end ${
-              msg.sender === "me" ? "justify-end" : "justify-start"
-            }`}
-          >
-            {msg.sender === "other" && (
-              <div className="md:w-10 md:h-10 w-8 h-8 rounded-full mr-2">
-                <img
-                  className="rounded-full object-fill"
-                  src={currentChat.avatar}
-                  alt="avatar"
-                />
-              </div>
-            )}
+        {messages.map((msg, idx) => {
+          const isMe = msg.sender === "me";
+          const avatar = isMe ? myAvatar : otherAvatar;
 
+          return (
             <div
-              className={`max-w-[60%] p-3 md:text-base text-md rounded-[16px] ${
-                msg.sender === "me"
-                  ? "bg-[#4258FF] text-white"
-                  : "bg-white text-[#020618]"
-              } shadow`}
+              key={idx}
+              className={`flex items-end gap-2 animate-fade-in ${
+                isMe ? "flex-row-reverse" : "flex-row"
+              }`}
             >
-              <p className="md:text-base text-sm">{msg.text}</p>
-            </div>
-
-            {msg.sender === "me" && (
-              <div className="md:w-10 md:h-10 w-8 h-8 rounded-full ml-2">
+              {/* Avatar */}
+              <div className="flex-shrink-0">
                 <img
-                  className="rounded-full object-fill"
-                  src={myAvatar}
-                  alt="avatar"
+                  src={avatar}
+                  alt={msg.sender}
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
                 />
               </div>
-            )}
-          </div>
-        ))}
-      </div>{" "}
-      {/* Input bar */}
-      <div className="sticky bottom-0 left-0 w-full p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] bg-opacity-0 backdrop-blur-sm">
-        <div className="flex justify-center">
-          <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
-            <button className="h-10 w-10 bg-[#E2E8F0] rounded-full flex items-center justify-center text-[#020618]">
-              <img src="/icon/chat/voice.svg" alt="icon" />
-            </button>
 
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Type your message..."
-              className="flex-1 px-2 mx-2 rounded-lg focus:outline-none"
-            />
+              {/* Message Bubble */}
+              <div
+                className={`flex flex-col ${
+                  isMe ? "items-end" : "items-start"
+                } max-w-[75%] sm:max-w-[60%]`}
+              >
+                <div
+                  className={`rounded-2xl px-4 py-2.5 transition-all hover:shadow-md ${
+                    isMe
+                      ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-sm shadow-sm"
+                      : "bg-white text-gray-800 rounded-bl-sm shadow-sm border border-gray-100"
+                  }`}
+                >
+                  <p className="text-sm leading-relaxed break-words">
+                    {msg.text}
+                  </p>
+                </div>
+                <span className="text-xs text-gray-500 mt-1.5 px-1 font-medium">
+                  {msg.time}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-            <button
-              onClick={handleSend}
-              className="h-10 w-10 bg-[#4258FF] rounded-full flex items-center justify-center text-white"
-            >
-              <img src="/icon/chat/send.svg" alt="icon" />
-            </button>
-          </div>
+      {/* Input Area */}
+      <div className="sticky bottom-0 left-0 right-0 flex items-center">
+        <div className="flex-1 relative">
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Мессеж бичих..."
+            className="w-full px-4 py-3 pr-12 rounded-3xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 resize-none transition-all bg-gray-50 focus:bg-white"
+            rows="1"
+            style={{
+              minHeight: "52px",
+              maxHeight: "120px",
+            }}
+            onInput={(e) => {
+              e.target.style.height = "52px";
+              e.target.style.height =
+                Math.min(e.target.scrollHeight, 120) + "px";
+            }}
+          />
         </div>
+
+        {/* Send Button */}
+        <button
+          onClick={handleSend}
+          disabled={!input.trim()}
+          className={`p-3.5 rounded-full mb-2 transition-all active:scale-95 ${
+            input.trim()
+              ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl"
+              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          <Send className="w-5 h-5" />
+        </button>
       </div>
     </div>
   );

@@ -66,7 +66,7 @@ export default function ChatLayout() {
 
         {/* Content area */}
         {isMobile ? (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1">
             {activePage === "chat" ? (
               <Outlet context={{ currentChat }} />
             ) : (
@@ -74,7 +74,7 @@ export default function ChatLayout() {
             )}
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1">
             <Outlet context={{ currentChat }} />
           </div>
         )}
