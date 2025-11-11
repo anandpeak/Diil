@@ -5,8 +5,6 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-
   const scrollRef = useRef();
   const inputRef = useRef();
 
@@ -24,41 +22,19 @@ export default function Chat() {
     }
   }, [messages]);
 
-  // Detect keyboard open/close (focus + resize)
+  // Scroll into view when keyboard opens (mobile)
   useEffect(() => {
-    const inputEl = inputRef.current;
-    if (!inputEl) return;
-
     const handleFocus = () => {
-      setIsKeyboardOpen(true);
       setTimeout(() => {
         scrollRef.current?.scrollTo({
           top: scrollRef.current.scrollHeight,
           behavior: "smooth",
         });
-      }, 300);
+      }, 300); // wait for keyboard animation
     };
-
-    const handleBlur = () => setIsKeyboardOpen(false);
-
-    const handleResize = () => {
-      // Detect when keyboard opens/closes via viewport height change
-      if (window.innerHeight < window.screen.height - 150) {
-        setIsKeyboardOpen(true);
-      } else {
-        setIsKeyboardOpen(false);
-      }
-    };
-
-    inputEl.addEventListener("focus", handleFocus);
-    inputEl.addEventListener("blur", handleBlur);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      inputEl.removeEventListener("focus", handleFocus);
-      inputEl.removeEventListener("blur", handleBlur);
-      window.removeEventListener("resize", handleResize);
-    };
+    const inputEl = inputRef.current;
+    inputEl?.addEventListener("focus", handleFocus);
+    return () => inputEl?.removeEventListener("focus", handleFocus);
   }, []);
 
   const handleSend = () => {
@@ -95,11 +71,7 @@ export default function Chat() {
   if (!currentChat) return <div>Loading...</div>;
 
   return (
-    <div
-      className={`relative w-full md:h-full bg-[#F1F5F9] flex flex-col transition-all duration-300 ${
-        isKeyboardOpen ? "flex-1" : "h-full"
-      }`}
-    >
+    <div className="relative w-full h-full bg-[#F1F5F9] flex flex-col">
       {/* Messages */}
       <div
         ref={scrollRef}
