@@ -5,9 +5,10 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
   const scrollRef = useRef();
 
-  const myAvatar = "https://i.pravatar.cc/150?img=10"; // Default 'me' avatar
+  const myAvatar = "https://i.pravatar.cc/150?img=10";
 
   useEffect(() => {
     if (currentChat) {
@@ -16,11 +17,11 @@ export default function Chat() {
   }, [currentChat]);
 
   useEffect(() => {
-    // Scroll to bottom whenever messages change
     if (scrollRef.current) {
+      // If input is focused, scroll so last message is above input
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, inputFocused]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -50,9 +51,7 @@ export default function Chat() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSend();
-    }
+    if (e.key === "Enter") handleSend();
   };
 
   if (!currentChat) return <div>Loading...</div>;
@@ -62,7 +61,12 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-scroll p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)] pb-28 px-6 md:pt-20 pt-14 lg:pt-4"
+        className={`flex-1 overflow-y-auto p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)] pb-28 px-6 md:pt-20 pt-14 lg:pt-4
+          ${
+            inputFocused
+              ? "max-h-[calc(100dvh-6.5rem)] md:max-h-[calc(100dvh-8.75rem)]"
+              : ""
+          }`}
       >
         {messages.map((msg, index) => (
           <div
@@ -117,6 +121,8 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type your message..."
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
             className="flex-1 px-2 mx-2 rounded-lg focus:outline-none"
           />
 
