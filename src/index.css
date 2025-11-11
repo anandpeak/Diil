@@ -29,18 +29,3 @@
     transform: translate3d(-50px, 105vh, 0) rotateX(10deg) rotateY(250deg);
   }
 }
-
-/* Fallback for browsers that don't support dvh */
-@supports not (height: 100dvh) {
-  .h-\[100dvh\] {
-    height: calc(var(--vh, 1vh) * 100);
-  }
-}
-
-/* Prevent content from being hidden behind mobile browser UI */
-body {
-  position: fixed;
-  width: 100%;
-  height: 100dvh;
-  overflow: hidden;
-}
