@@ -5,7 +5,7 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [inputFocused, setInputFocused] = useState(false);
+  const [bottomOffset, setBottomOffset] = useState(10); // for mobile keyboard
   const scrollRef = useRef();
 
   const myAvatar = "https://i.pravatar.cc/150?img=10";
@@ -18,10 +18,23 @@ export default function Chat() {
 
   useEffect(() => {
     if (scrollRef.current) {
-      // If input is focused, scroll so last message is above input
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, inputFocused]);
+  }, [messages]);
+
+  // Handle mobile keyboard
+  useEffect(() => {
+    const handleResize = () => {
+      const windowHeight = window.innerHeight;
+      const bottom = window.innerHeight - window.visualViewport?.height || 10;
+      setBottomOffset(bottom);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // initial
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -61,12 +74,9 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)] pb-28 px-6 md:pt-20 pt-14 lg:pt-4
-          ${
-            inputFocused
-              ? "max-h-[calc(100dvh-6.5rem)] md:max-h-[calc(100dvh-8.75rem)]"
-              : ""
-          }`}
+        className={`flex-1 overflow-y-scroll p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] ${
+          bottomOffset === 10 && "max-h-[calc(100dvh-4rem-61px)]"
+        } pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
       >
         {messages.map((msg, index) => (
           <div
@@ -109,7 +119,10 @@ export default function Chat() {
       </div>
 
       {/* Input box fixed at bottom */}
-      <div className="sticky bottom-6 inset-x-0 flex justify-center bg-opacity-0">
+      <div
+        className="fixed left-0 w-full flex justify-center bg-opacity-0 transition-all duration-300 md:bottom-6"
+        style={{ bottom: bottomOffset }}
+      >
         <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
           <button className="h-10 w-10 bg-[#E2E8F0] rounded-full flex items-center justify-center text-[#020618]">
             <img src="/icon/chat/voice.svg" alt="icon" />
@@ -121,8 +134,6 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type your message..."
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
             className="flex-1 px-2 mx-2 rounded-lg focus:outline-none"
           />
 
