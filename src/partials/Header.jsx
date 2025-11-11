@@ -1,7 +1,7 @@
 import React from "react";
 import { useSidebar } from "../context/SidebarContext";
 import { RxDoubleArrowRight } from "react-icons/rx";
-import { FiArrowUpRight, FiMenu } from "react-icons/fi";
+import { FiArrowUpRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 function ExpandingSearch() {

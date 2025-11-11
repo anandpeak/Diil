@@ -20,7 +20,7 @@ const Sidebar = () => {
     if (window.innerWidth < 768) {
       setSidebar(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, setSidebar]);
 
   return (
     <div

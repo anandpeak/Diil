@@ -74,7 +74,7 @@ const Layout = () => {
           <div
             className={`w-full ${
               isScrolled
-                ? `fixed top-0 z-30 border-b border-[#CAD5E2] ${
+                ? `fixed top-0 z-30 md:border-b border-[#CAD5E2] ${
                     sidebar
                       ? "lg:w-[calc(100%-14.75rem)]"
                       : "lg:w-[calc(100%-5rem)]"
