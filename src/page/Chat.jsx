@@ -118,7 +118,7 @@ export default function Chat() {
       </div>
 
       {/* Input bar */}
-      <div className="sticky bottom-0 left-0 w-full p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] bg-white/80 backdrop-blur-sm">
+      <div className="sticky bottom-0 left-0 w-full p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] bg-[#F1F5F9] backdrop-blur-sm">
         <div className="flex justify-center">
           <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
             <button className="h-10 w-10 bg-[#E2E8F0] rounded-full flex items-center justify-center text-[#020618]">
