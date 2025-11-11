@@ -5,6 +5,7 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const scrollRef = useRef();
   const inputRef = useRef();
 
@@ -17,24 +18,33 @@ export default function Chat() {
 
   // Always scroll to bottom when messages change
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && !isInputFocused) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isInputFocused]);
 
   // Scroll into view when keyboard opens (mobile)
   useEffect(() => {
     const handleFocus = () => {
+      setIsInputFocused(true);
       setTimeout(() => {
-        scrollRef.current?.scrollTo({
-          top: scrollRef.current.scrollHeight,
-          behavior: "smooth",
-        });
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
       }, 300); // wait for keyboard animation
     };
+
+    const handleBlur = () => {
+      setIsInputFocused(false);
+    };
+
     const inputEl = inputRef.current;
     inputEl?.addEventListener("focus", handleFocus);
-    return () => inputEl?.removeEventListener("focus", handleFocus);
+    inputEl?.addEventListener("blur", handleBlur);
+    return () => {
+      inputEl?.removeEventListener("focus", handleFocus);
+      inputEl?.removeEventListener("blur", handleBlur);
+    };
   }, []);
 
   const handleSend = () => {
@@ -75,7 +85,12 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth max-h-[71vh]"
+        className={`overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth transition-all duration-300
+          ${
+            isInputFocused
+              ? "max-h-[40vh] flex flex-col-reverse" // smaller + reversed when focused
+              : "flex-1 max-h-[71vh] flex flex-col"
+          }`}
       >
         {messages.map((msg, index) => (
           <div
