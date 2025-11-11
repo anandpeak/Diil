@@ -24,7 +24,7 @@ export default function ChatLayout() {
   }, []);
 
   return (
-    <div className="flex h-[100dvh]">
+    <div className="flex md:h-[calc(100dvh-4rem)] h-[100dvh]">
       {/* Sidebar */}
       {!isMobile && (
         <ChatSidebar chats={chats} chatId={chatId} setChatId={setChatId} />

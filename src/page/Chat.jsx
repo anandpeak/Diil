@@ -5,7 +5,8 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
   const scrollRef = useRef();
   const inputRef = useRef();
 
@@ -18,32 +19,45 @@ export default function Chat() {
 
   // Always scroll to bottom when messages change
   useEffect(() => {
-    if (scrollRef.current && !isInputFocused) {
+    if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isInputFocused]);
+  }, [messages]);
 
-  // Scroll into view when keyboard opens (mobile)
+  // Detect keyboard open/close (focus + resize)
   useEffect(() => {
-    const handleFocus = () => {
-      setIsInputFocused(true);
-      setTimeout(() => {
-        if (scrollRef.current) {
-          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-      }, 300); // wait for keyboard animation
-    };
-
-    const handleBlur = () => {
-      setIsInputFocused(false);
-    };
-
     const inputEl = inputRef.current;
-    inputEl?.addEventListener("focus", handleFocus);
-    inputEl?.addEventListener("blur", handleBlur);
+    if (!inputEl) return;
+
+    const handleFocus = () => {
+      setIsKeyboardOpen(true);
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 300);
+    };
+
+    const handleBlur = () => setIsKeyboardOpen(false);
+
+    const handleResize = () => {
+      // Detect when keyboard opens/closes via viewport height change
+      if (window.innerHeight < window.screen.height - 150) {
+        setIsKeyboardOpen(true);
+      } else {
+        setIsKeyboardOpen(false);
+      }
+    };
+
+    inputEl.addEventListener("focus", handleFocus);
+    inputEl.addEventListener("blur", handleBlur);
+    window.addEventListener("resize", handleResize);
+
     return () => {
-      inputEl?.removeEventListener("focus", handleFocus);
-      inputEl?.removeEventListener("blur", handleBlur);
+      inputEl.removeEventListener("focus", handleFocus);
+      inputEl.removeEventListener("blur", handleBlur);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -81,16 +95,15 @@ export default function Chat() {
   if (!currentChat) return <div>Loading...</div>;
 
   return (
-    <div className="relative w-full h-full bg-[#F1F5F9] flex flex-col">
+    <div
+      className={`relative w-full md:h-full bg-[#F1F5F9] flex flex-col transition-all duration-300 ${
+        isKeyboardOpen ? "flex-1" : "h-full"
+      }`}
+    >
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth transition-all duration-300
-          ${
-            isInputFocused
-              ? "max-h-[40vh] flex flex-col-reverse" // smaller + reversed when focused
-              : "flex-1 max-h-[71vh] flex flex-col"
-          }`}
+        className="flex-1 overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth max-h-[71vh]"
       >
         {messages.map((msg, index) => (
           <div
