@@ -75,7 +75,7 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth"
+        className="flex-1 overflow-y-auto space-y-4 p-4 md:pt-20 pt-14 lg:pt-4 scroll-smooth max-h-[71vh]"
       >
         {messages.map((msg, index) => (
           <div
