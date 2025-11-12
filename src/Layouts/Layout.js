@@ -34,7 +34,7 @@ const Layout = () => {
   const isChatPage = location.pathname.startsWith("/chat");
 
   return (
-    <div className="flex w-full overflow-hidden min-h-[calc(var(--vh,1vh)*100)]">
+    <div className="flex w-full overflow-hidden ">
       {/* Desktop Sidebar */}
       <aside
         className={`hidden lg:block fixed left-0 top-0 h-screen transition-all duration-100 z-40 ${

@@ -29,7 +29,7 @@ const Games = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-10/12 mb-10">
       <div className="md:overflow-x-scroll  scrollbar-hide w-full md:flex md:space-y-0 space-y-2.5  lg:flex-nowrap md:flex-wrap block items-center gap-3 md:px-4">
         {data.map((item, index) => (
           <div
@@ -94,7 +94,7 @@ const Games = () => {
       </div>
       <div className="md:pt-12 pt-6 md:px-9 px-4">
         <p className="text-[#020618 font-bold mb-4">Мэдээ</p>
-        <div className="md:flex block flex-wrap items-center lg:gap-4 gap-6 md:space-y-0 space-y-10">
+        <div className="md:flex block flex-wrap items-center lg:gap-8 gap-6 md:space-y-0 space-y-10">
           {news.map((item, index) => (
             <div key={index} className="lg:w-[283px] md:w-[47%] w-full mb-3">
               <div className="w-10 h-10 flex items-center justify-center bg-[#F1F5F9] rounded-full">
