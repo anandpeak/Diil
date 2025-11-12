@@ -45,8 +45,8 @@ export default function ChatLayout() {
 
   return (
     <div
-      className={`flex md:h-[calc(100dvh-4rem)]  ${
-        !keyboardOpen ? "h-[100dvh]" : ""
+      className={`flex  ${
+        !keyboardOpen ? "md:h-[calc(100dvh-4rem)] h-[100dvh]" : ""
       }`}
     >
       {/* Sidebar */}
