@@ -45,7 +45,7 @@ export default function ChatLayout() {
 
   return (
     <div
-      className={`flex overflow-hidden ${
+      className={`flex  ${
         !keyboardOpen ? "md:h-[calc(100dvh-4rem)] h-[100dvh]" : ""
       }`}
     >

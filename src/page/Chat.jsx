@@ -77,21 +77,16 @@ export default function Chat() {
   if (!currentChat) return <div>Loading...</div>;
 
   return (
-    <div
-      className={`relative w-full ${
-        bottomOffset === 24 ? "h-full" : ""
-      } bg-[#F1F5F9] flex flex-col`}
-    >
+    <div className="relative w-full h-full bg-[#F1F5F9] flex flex-col">
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto p-4 space-y-4  ${
+        className={`flex-1 overflow-y-auto p-4 space-y-4 ${
           bottomOffset === 24
             ? "md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)]"
             : "max-h-[40dvh]"
         } pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
       >
-        {console.log("bottomOffset", bottomOffset)}
         {messages.map((msg, index) => (
           <div
             key={index}
