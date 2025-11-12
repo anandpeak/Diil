@@ -5,7 +5,6 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [bottomOffset, setBottomOffset] = useState(24); // dynamic bottom for mobile keyboard
   const scrollRef = useRef();
 
   const myAvatar = "https://i.pravatar.cc/150?img=10";
@@ -15,32 +14,12 @@ export default function Chat() {
     if (currentChat) setMessages(currentChat.messages);
   }, [currentChat]);
 
-  // Auto-scroll whenever messages or bottomOffset change
+  // Auto-scroll whenever messages change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, bottomOffset]);
-
-  // Mobile keyboard handling
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.visualViewport) {
-        const vh = window.visualViewport.height;
-        const bottom = Math.max(window.innerHeight - vh, 24);
-        setBottomOffset(bottom);
-      } else {
-        setBottomOffset(24);
-      }
-    };
-
-    // Listen to viewport changes (keyboard open/close)
-    window.visualViewport?.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () =>
-      window.visualViewport?.removeEventListener("resize", handleResize);
-  }, []);
+  }, [messages]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -77,15 +56,14 @@ export default function Chat() {
   if (!currentChat) return <div>Loading...</div>;
 
   return (
-    <div className="relative w-full h-full bg-[#F1F5F9] flex flex-col">
+    <div
+      className="relative w-full flex flex-col bg-[#F1F5F9]"
+      style={{ height: "100dvh" }}
+    >
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto p-4 space-y-4 ${
-          bottomOffset === 24
-            ? "md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)]"
-            : "max-h-[40dvh]"
-        } pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
+        className="flex-1 overflow-y-auto p-4 space-y-4 pb-[90px] px-6 md:pt-20 pt-14 lg:pt-4"
       >
         {messages.map((msg, index) => (
           <div
@@ -128,11 +106,8 @@ export default function Chat() {
       </div>
 
       {/* Input box */}
-      <div
-        className="fixed left-0 w-full flex justify-center bg-opacity-0 transition-all duration-300"
-        style={{ bottom: bottomOffset }}
-      >
-        <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
+      <div className="fixed bottom-6 left-0 w-full flex justify-center bg-opacity-0">
+        <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md mb-safe">
           <button className="h-10 w-10 bg-[#E2E8F0] rounded-full flex items-center justify-center text-[#020618]">
             <img src="/icon/chat/voice.svg" alt="icon" />
           </button>
