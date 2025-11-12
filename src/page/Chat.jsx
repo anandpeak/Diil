@@ -129,7 +129,7 @@ export default function Chat() {
 
       {/* Input box */}
       <div
-        className="sticky left-0 w-full flex justify-center bg-opacity-0 transition-all duration-300"
+        className="fixed left-0 w-full flex justify-center bg-opacity-0 transition-all duration-300"
         style={{ bottom: bottomOffset }}
       >
         <div className="flex items-center lg:w-[320px] rounded-[99px] bg-white p-1 transition-all duration-300 w-[90vw] lg:hover:w-[420px] lg:focus-within:w-[420px] shadow-md">
