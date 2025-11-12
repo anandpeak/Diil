@@ -81,7 +81,11 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)] pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
+        className={`flex-1 overflow-y-auto p-4 space-y-4 ${
+          bottomOffset === 24
+            ? "md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)]"
+            : ""
+        } pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
       >
         {messages.map((msg, index) => (
           <div

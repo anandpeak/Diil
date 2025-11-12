@@ -57,7 +57,7 @@ export default function ChatLayout() {
       {/* Main content */}
       <div className="flex flex-col flex-1 relative ">
         {/* Hide header when keyboard opens */}
-        {!keyboardOpen && <ChatHeader currentChat={currentChat} />}
+        <ChatHeader currentChat={currentChat} />
 
         {/* Mobile toggle buttons */}
         {isMobile && !keyboardOpen && (
@@ -101,6 +101,7 @@ export default function ChatLayout() {
           )}
         </div>
       </div>
+      {keyboardOpen ? "sdfioasdjifoasdjfadskfasdfo" : ""}
 
       {/* Chat info on large screens */}
       {!isMobile && <ChatInfo currentChat={currentChat} />}
