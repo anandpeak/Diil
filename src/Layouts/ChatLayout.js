@@ -101,7 +101,6 @@ export default function ChatLayout() {
           )}
         </div>
       </div>
-      {keyboardOpen ? "sdfioasdjifoasdjfadskfasdfo" : ""}
 
       {/* Chat info on large screens */}
       {!isMobile && <ChatInfo currentChat={currentChat} />}
