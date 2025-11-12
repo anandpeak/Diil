@@ -10,21 +10,45 @@ export default function ChatLayout() {
   const [chatId, setChatId] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [activePage, setActivePage] = useState("chat"); // "chat" or "info"
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   const currentChat = chats.find((c) => c.id === chatId);
 
   // Track screen size
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024); // tablet or lower
+      setIsMobile(window.innerWidth < 1024);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Detect keyboard open on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleKeyboard = () => {
+      if (window.visualViewport) {
+        const vh = window.visualViewport.height;
+        const keyboardVisible = vh < window.innerHeight - 100; // approx keyboard height
+        setKeyboardOpen(keyboardVisible);
+      }
+    };
+
+    window.visualViewport?.addEventListener("resize", handleKeyboard);
+    handleKeyboard();
+
+    return () =>
+      window.visualViewport?.removeEventListener("resize", handleKeyboard);
+  }, [isMobile]);
+
   return (
-    <div className="flex md:h-[calc(100dvh-4rem)] h-[100dvh]">
+    <div
+      className={`flex md:h-[calc(100dvh-4rem)]  ${
+        !keyboardOpen ? "h-[100dvh]" : ""
+      }`}
+    >
       {/* Sidebar */}
       {!isMobile && (
         <ChatSidebar chats={chats} chatId={chatId} setChatId={setChatId} />
@@ -32,13 +56,14 @@ export default function ChatLayout() {
 
       {/* Main content */}
       <div className="flex flex-col flex-1 relative ">
-        <ChatHeader currentChat={currentChat} />
+        {/* Hide header when keyboard opens */}
+        {!keyboardOpen && <ChatHeader currentChat={currentChat} />}
 
         {/* Mobile toggle buttons */}
-        {isMobile && (
+        {isMobile && !keyboardOpen && (
           <div className="relative">
             <div
-              className={`absolute top-0 left-0 z-10 w-full flex justify-center gap-2  py-2 px-2 `}
+              className={`absolute top-0 left-0 z-10 w-full flex justify-center gap-2 py-2 px-2`}
             >
               <button
                 className={`w-[45%] md:py-2 py-1.5 rounded-full bg-white border md:text-base text-sm ${
@@ -64,20 +89,17 @@ export default function ChatLayout() {
           </div>
         )}
 
-        {/* Content area */}
-        {isMobile ? (
-          <div className="flex-1">
-            {activePage === "chat" ? (
+        <div className={`flex-1`}>
+          {isMobile ? (
+            activePage === "chat" ? (
               <Outlet context={{ currentChat }} />
             ) : (
               <ChatInfo currentChat={currentChat} />
-            )}
-          </div>
-        ) : (
-          <div className="flex-1">
+            )
+          ) : (
             <Outlet context={{ currentChat }} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Chat info on large screens */}

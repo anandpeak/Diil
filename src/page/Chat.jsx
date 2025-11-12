@@ -5,7 +5,7 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [bottomOffset, setBottomOffset] = useState(10); // dynamic bottom for mobile keyboard
+  const [bottomOffset, setBottomOffset] = useState(24); // dynamic bottom for mobile keyboard
   const scrollRef = useRef();
 
   const myAvatar = "https://i.pravatar.cc/150?img=10";
@@ -27,10 +27,10 @@ export default function Chat() {
     const handleResize = () => {
       if (window.visualViewport) {
         const vh = window.visualViewport.height;
-        const bottom = Math.max(window.innerHeight - vh, 10);
+        const bottom = Math.max(window.innerHeight - vh, 24);
         setBottomOffset(bottom);
       } else {
-        setBottomOffset(10);
+        setBottomOffset(24);
       }
     };
 
