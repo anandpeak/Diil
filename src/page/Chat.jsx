@@ -5,35 +5,41 @@ export default function Chat() {
   const { currentChat } = useOutletContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [bottomOffset, setBottomOffset] = useState(10); // for mobile keyboard
+  const [bottomOffset, setBottomOffset] = useState(10); // dynamic bottom for mobile keyboard
   const scrollRef = useRef();
 
   const myAvatar = "https://i.pravatar.cc/150?img=10";
 
+  // Load chat messages
   useEffect(() => {
-    if (currentChat) {
-      setMessages(currentChat.messages);
-    }
+    if (currentChat) setMessages(currentChat.messages);
   }, [currentChat]);
 
+  // Auto-scroll whenever messages or bottomOffset change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, bottomOffset]);
 
-  // Handle mobile keyboard
+  // Mobile keyboard handling
   useEffect(() => {
     const handleResize = () => {
-      const windowHeight = window.innerHeight;
-      const bottom = window.innerHeight - window.visualViewport?.height || 10;
-      setBottomOffset(bottom);
+      if (window.visualViewport) {
+        const vh = window.visualViewport.height;
+        const bottom = Math.max(window.innerHeight - vh, 10);
+        setBottomOffset(bottom);
+      } else {
+        setBottomOffset(10);
+      }
     };
 
-    window.addEventListener("resize", handleResize);
-    handleResize(); // initial
+    // Listen to viewport changes (keyboard open/close)
+    window.visualViewport?.addEventListener("resize", handleResize);
+    handleResize();
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () =>
+      window.visualViewport?.removeEventListener("resize", handleResize);
   }, []);
 
   const handleSend = () => {
@@ -50,6 +56,7 @@ export default function Chat() {
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
 
+    // Example auto-reply
     setTimeout(() => {
       const reply = {
         sender: "other",
@@ -74,9 +81,7 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-scroll p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] ${
-          bottomOffset === 10 && "max-h-[calc(100dvh-4rem-61px)]"
-        } pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
+        className={`flex-1 overflow-y-auto p-4 space-y-4 md:max-h-[calc(100dvh-8.75rem)] max-h-[calc(100dvh-4rem-61px)] pb-28 px-6 md:pt-20 pt-14 lg:pt-4`}
       >
         {messages.map((msg, index) => (
           <div
@@ -118,7 +123,7 @@ export default function Chat() {
         ))}
       </div>
 
-      {/* Input box fixed at bottom */}
+      {/* Input box */}
       <div
         className="fixed left-0 w-full flex justify-center bg-opacity-0 transition-all duration-300 md:bottom-6"
         style={{ bottom: bottomOffset }}
